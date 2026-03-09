@@ -165,4 +165,3 @@ esp32-esc-control
 
 **Muhammad Tanzeel**  
 - Embedded Systems & IoT Developer  
-- Portfolio-ready project for ESC control and IoT firmware
