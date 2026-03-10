@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <cmath>
 
 #define escpin 4
 #define led_builtin 2
@@ -11,8 +10,8 @@ const int pwm_channel = 0;     //channels (0–15)
 const float t_period = 1.0 / pwm_freq;
 
 //duty cycle values for 1ms and 2ms pulses
-const uint32_t duty_min = (0.001 / t_period) * (pow(2, pwm_res) - 1);
-const uint32_t duty_max = (0.002 / t_period) * (pow(2, pwm_res) - 1);
+const uint32_t duty_min = (0.001 / t_period) * ((1 << pwm_res) - 1);
+const uint32_t duty_max = (0.002 / t_period) * ((1 << pwm_res) - 1);
 
 uint32_t pwm_duty = duty_min;
 unsigned long t_last = 0;
@@ -56,4 +55,4 @@ void loop()
 
         t_last = t_current;
     }
-}  
+}   
