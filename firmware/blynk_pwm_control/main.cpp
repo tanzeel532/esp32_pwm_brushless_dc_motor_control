@@ -1,14 +1,13 @@
-#define BLYNK_TEMPLATE_ID "TMPL6ALa_pQnj"
+#define BLYNK_TEMPLATE_ID "template id"
 #define BLYNK_TEMPLATE_NAME "bldc"
-#define BLYNK_AUTH_TOKEN "8OwHjJGE4XoiPi44VbO1FllgAv5yv3iO"
+#define BLYNK_AUTH_TOKEN "auth_token"
 
 #include <Arduino.h>
-#include <cmath>
 #include <WiFi.h>
 #include <BlynkSimpleEsp32.h>
 
-const char ssid[] = "GIS-GPON-G0990";
-const char pass[] = "11447788";
+const char ssid[] = "your wifi name";
+const char pass[] = "wifi password";
 
 #define escpin 4
 #define led_builtin 2
@@ -20,11 +19,10 @@ const int pwm_channel = 0; // channels (0–15)
 const float t_period = 1.0 / pwm_freq;
 
 // duty cycle values for 1ms and 2ms pulses
-const uint32_t duty_min = (0.001 / t_period) * (pow(2, pwm_res) - 1);
-const uint32_t duty_max = (0.002 / t_period) * (pow(2, pwm_res) - 1);
+const uint32_t duty_min = (0.001 / t_period) * ((1 << pwm_res) - 1);
+const uint32_t duty_max = (0.002 / t_period) * ((1 << pwm_res) - 1);
 
 uint32_t pwm_duty = duty_min;
-unsigned long t_last = 0;
 
 void setup()
 {
@@ -36,7 +34,7 @@ void setup()
     ledcWrite(pwm_channel, duty_min);
 
     // led blink at startup
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 3; i++)
     {
         digitalWrite(led_builtin, HIGH);
         delay(500);
@@ -50,15 +48,13 @@ void setup()
 
 BLYNK_WRITE(V0)
 {
-    int pwm_duty = param.asInt();
+    int throttle = param.asInt();
+    pwm_duty = map(throttle, 0, 100, duty_min, duty_max);     //takes integer 0-100 from blynk
+    ledcWrite(pwm_channel, pwm_duty);
 
-    unsigned long t_current = millis();
-    unsigned long diff = t_current - t_last;
-
-    if (diff >= 20)
+    if (!Blynk.connected())     //prevents motor running if wifi disconnected
     {
-        ledcWrite(pwm_channel, pwm_duty);
-        t_last = t_current;
+        ledcWrite(pwm_channel, duty_min);     
     }
 }
 void loop()
