@@ -135,6 +135,8 @@ lib_deps = blynkkk/Blynk
 
 Then build and upload again.
 
+Note: You should have stable wifi connection for smoother bldc control.
+
 ---
 
 ## Repository Structure
